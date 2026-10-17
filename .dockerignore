@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.github/
+data/
+*.pkl
+.mlflow/
+.pytest_cache/
+.venv/
+venv/
+*.md
+!README.md
+.dockerignore
+.DS_Store
