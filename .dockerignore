@@ -5,6 +5,7 @@ __pycache__/
 .github/
 data/
 *.pkl
+!ml/registry/spam_model.pkl
 .mlflow/
 .pytest_cache/
 .venv/

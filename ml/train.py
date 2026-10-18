@@ -1,15 +1,13 @@
-"""训练脚本：TF-IDF + 逻辑回归，接入 MLflow。
+"""训练脚本：TF-IDF + 逻辑回归，接入 MLflow（可选）。
 
 用法：
     python -m ml.train                  # 跑基线实验
-    BASELINE=0 python -m ml.train       # 跑改进实验（bigram + 调参）
+    $env:BASELINE="0"; python -m ml.train   # 跑改进实验（bigram + 调参）
 """
 import os
 import pickle
 from pathlib import Path
 
-import mlflow
-import mlflow.sklearn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -17,6 +15,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
 from ml.data_pipeline import clean_text, load_data
+
+# mlflow 是可选依赖：装了就记录实验，没装就用 print 代替
+try:
+    import mlflow
+    HAS_MLFLOW = True
+except ImportError:
+    HAS_MLFLOW = False
 
 REGISTRY_DIR = Path(__file__).resolve().parent / "registry"
 REGISTRY_DIR.mkdir(exist_ok=True)
@@ -47,32 +52,37 @@ def main():
     C = 10.0 if use_bigram else 1.0
     experiment_name = "improved_bigram" if use_bigram else "baseline_unigram"
 
-    mlflow.set_experiment("spam-detector")
+    if HAS_MLFLOW:
+        mlflow.set_experiment("spam-detector")
+        mlflow.start_run(run_name=experiment_name).__enter__()
 
-    with mlflow.start_run(run_name=experiment_name):
-        model = build_pipeline(use_bigram=use_bigram, C=C)
-        model.fit(X_train, y_train)
+    model = build_pipeline(use_bigram=use_bigram, C=C)
+    model.fit(X_train, y_train)
 
-        y_pred = model.predict(X_test)
-        acc = accuracy_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
 
+    if HAS_MLFLOW:
         mlflow.log_param("ngram_range", "1,2" if use_bigram else "1,1")
         mlflow.log_param("C", C)
-        mlflow.log_param("max_iter", 1000)
         mlflow.log_metric("accuracy", acc)
         mlflow.log_metric("f1", f1)
         mlflow.log_metric("precision", precision)
         mlflow.log_metric("recall", recall)
 
-        # 保存模型到 registry 目录（供 API 加载）
-        with open(MODEL_SAVE_PATH, "wb") as f:
-            pickle.dump(model, f)
-        mlflow.log_artifact(str(MODEL_SAVE_PATH))
+    # 保存模型到 registry 目录（供 API 加载）
+    with open(MODEL_SAVE_PATH, "wb") as f:
+        pickle.dump(model, f)
 
-        print(f"[{experiment_name}] accuracy={acc:.4f}  f1={f1:.4f}")
+    if HAS_MLFLOW:
+        mlflow.log_artifact(str(MODEL_SAVE_PATH))
+        mlflow.end_run()
+
+    print(f"[{experiment_name}] accuracy={acc:.4f}  f1={f1:.4f}  precision={precision:.4f}  recall={recall:.4f}")
+    print(f"模型已保存到: {MODEL_SAVE_PATH}")
 
 
 if __name__ == "__main__":

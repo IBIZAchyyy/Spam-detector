@@ -21,6 +21,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Download dataset
+        run: |
+          mkdir -p data
+          curl -L -o data/sms.zip "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip"
+          cd data && unzip -o sms.zip && mv SMSSpamCollection spam.csv && cd ..
+
+      - name: Train model (generates pkl for tests)
+        run: python -m ml.train
+
       - name: Lint (ruff)
         run: ruff check app ml tests
 
@@ -32,3 +41,31 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t spam-detector:ci .
+
+  # 合并到 staging 后：用 staging secrets 生成 .env，构建 staging 镜像
+  deploy-staging:
+    needs: test-lint-build
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write staging .env from secrets
+        run: echo "${{ secrets.STAGING_ENV }}" > .env
+
+      - name: Build staging Docker image
+        run: docker build -t spam-detector:staging .
+
+  # 合并到 main 后：用 production secrets 生成 .env，构建生产镜像
+  deploy-prod:
+    needs: test-lint-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write production .env from secrets
+        run: echo "${{ secrets.PROD_ENV }}" > .env
+
+      - name: Build production Docker image
+        run: docker build -t spam-detector:prod .
