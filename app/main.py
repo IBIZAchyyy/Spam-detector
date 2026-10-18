@@ -1,4 +1,5 @@
 """垃圾邮件检测 FastAPI 服务入口。"""
+
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 

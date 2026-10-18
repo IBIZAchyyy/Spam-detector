@@ -4,6 +4,7 @@
     python -m ml.train                  # 跑基线实验
     $env:BASELINE="0"; python -m ml.train   # 跑改进实验（bigram + 调参）
 """
+
 import os
 import pickle
 from pathlib import Path
@@ -19,6 +20,7 @@ from ml.data_pipeline import clean_text, load_data
 # mlflow 是可选依赖：装了就记录实验，没装就用 print 代替
 try:
     import mlflow
+
     HAS_MLFLOW = True
 except ImportError:
     HAS_MLFLOW = False
@@ -44,7 +46,11 @@ def main():
     df["cleaned"] = df["text"].apply(clean_text)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        df["cleaned"], df["label_num"], test_size=0.2, random_state=42, stratify=df["label_num"]
+        df["cleaned"],
+        df["label_num"],
+        test_size=0.2,
+        random_state=42,
+        stratify=df["label_num"],
     )
 
     # 通过环境变量切换基线/改进实验
@@ -81,7 +87,9 @@ def main():
         mlflow.log_artifact(str(MODEL_SAVE_PATH))
         mlflow.end_run()
 
-    print(f"[{experiment_name}] accuracy={acc:.4f}  f1={f1:.4f}  precision={precision:.4f}  recall={recall:.4f}")
+    print(
+        f"[{experiment_name}] accuracy={acc:.4f}  f1={f1:.4f}  precision={precision:.4f}  recall={recall:.4f}"
+    )
     print(f"模型已保存到: {MODEL_SAVE_PATH}")
 
 

@@ -1,4 +1,5 @@
 """模型预测测试：覆盖垃圾邮件、正常邮件和边界情况。"""
+
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
@@ -44,11 +45,11 @@ def test_predict_ham(text):
 @pytest.mark.parametrize(
     "text",
     [
-        "",                          # 空文本
-        "a",                         # 极短文本
-        "Free money " * 100,         # 长文本
-        "!!!@@@###$$$",              # 纯符号
-        "1234567890",                # 纯数字
+        "",  # 空文本
+        "a",  # 极短文本
+        "Free money " * 100,  # 长文本
+        "!!!@@@###$$$",  # 纯符号
+        "1234567890",  # 纯数字
     ],
 )
 def test_predict_edge_cases(text):
