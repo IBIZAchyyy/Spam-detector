@@ -28,7 +28,7 @@ jobs:
           cd data && unzip -o sms.zip && mv SMSSpamCollection spam.csv && cd ..
 
       - name: Train model (generates pkl for tests)
-        run: python -m ml.train
+        run: BASELINE=0 python -m ml.train
 
       - name: Lint (ruff)
         run: ruff check app ml tests
