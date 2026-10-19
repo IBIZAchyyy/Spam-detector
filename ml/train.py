@@ -8,8 +8,9 @@ from ml.data_pipeline import load_data, clean_text
 
 try:
     import mlflow
+
     has_mlflow = True
-except:
+except ImportError:
     has_mlflow = False
 
 # 是不是跑改进实验
