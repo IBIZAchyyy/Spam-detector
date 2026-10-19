@@ -1,0 +1,15 @@
+stages:
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/train.csv
+  evaluate:
+    cmd: python evaluate.py
+    deps:
+      - models/spam.pkl
+      - data/test.csv
+      - evaluate.py
+    metrics:
+      - metrics.json:
+          persist: true
