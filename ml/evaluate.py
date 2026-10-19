@@ -39,12 +39,7 @@ def main():
     print(f"模型F1: {f1:.4f}")
 
     # 保存为metrics.json
-    metrics = {
-        "accuracy": acc,
-        "recall": recall,
-        "precision": precision,
-        "f1": f1
-    }
+    metrics = {"accuracy": acc, "recall": recall, "precision": precision, "f1": f1}
     with open("ml/metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
