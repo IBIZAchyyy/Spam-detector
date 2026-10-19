@@ -9,8 +9,8 @@ stages:
       size: 346
     - path: src/train.py
       hash: md5
-      md5: fa484c88cdfe2d73fbd6708ceac11a0c
-      size: 628
+      md5: 96adf927501e73bf8e5fb303fa6e3b68
+      size: 990
   evaluate:
     cmd: python evaluate.py
     deps:

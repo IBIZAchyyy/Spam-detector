@@ -5,3 +5,6 @@ models/
 .venv/
 env/
 .DS_Store
+# MLflow database
+mlflow.db
+mlruns/
