@@ -42,6 +42,9 @@ f1 = f1_score(y_test, pred)
 print(f"准确率: {acc:.4f}, F1: {f1:.4f}")
 
 # 保存模型
+import os
+
+os.makedirs("ml/registry", exist_ok=True)
 with open("ml/registry/spam_model.pkl", "wb") as f:
     pickle.dump((vec, clf), f)
 
