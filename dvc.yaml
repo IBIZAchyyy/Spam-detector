@@ -1,0 +1,19 @@
+stages:
+  train:
+    cmd: python -m ml.train
+    deps:
+      - ml/train.py
+      - ml/data_pipeline.py
+      - data/spam.csv
+    outs:
+      - ml/registry/spam_model.pkl
+
+  evaluate:
+    cmd: python -m ml.evaluate
+    deps:
+      - ml/registry/spam_model.pkl
+      - data/spam.csv
+      - ml/evaluate.py
+    metrics:
+      - ml/metrics.json:
+          persist: true

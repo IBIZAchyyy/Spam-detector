@@ -1,0 +1,42 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python -m ml.train
+    deps:
+    - path: data/spam.csv
+      hash: md5
+      md5: 1030a1d18339617f69df7807490ca23b
+      size: 442651
+    - path: ml/data_pipeline.py
+      hash: md5
+      md5: a606aa794330e4837304560b06f8cde8
+      size: 879
+    - path: ml/train.py
+      hash: md5
+      md5: 693fbfbd5f5a6038e262fcd08650c064
+      size: 3044
+    outs:
+    - path: ml/registry/spam_model.pkl
+      hash: md5
+      md5: e25e0847306bed197ed991e441c95d4b
+      size: 209831
+  evaluate:
+    cmd: python -m ml.evaluate
+    deps:
+    - path: data/spam.csv
+      hash: md5
+      md5: 1030a1d18339617f69df7807490ca23b
+      size: 442651
+    - path: ml/evaluate.py
+      hash: md5
+      md5: 53d742b13bae5e8dc39334d83418833e
+      size: 1405
+    - path: ml/registry/spam_model.pkl
+      hash: md5
+      md5: e25e0847306bed197ed991e441c95d4b
+      size: 209831
+    outs:
+    - path: ml/metrics.json
+      hash: md5
+      md5: 91daaf06abf70644a28b9872eaaae846
+      size: 120
