@@ -1,0 +1,33 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/train.csv
+      hash: md5
+      md5: 846d1569a62705a641d56eaad28558df
+      size: 346
+    - path: src/train.py
+      hash: md5
+      md5: fa484c88cdfe2d73fbd6708ceac11a0c
+      size: 628
+  evaluate:
+    cmd: python evaluate.py
+    deps:
+    - path: data/test.csv
+      hash: md5
+      md5: bb9be87367bec81fb0778d146d4785ab
+      size: 59
+    - path: evaluate.py
+      hash: md5
+      md5: a6ffd3e72bcf64ff34aafbe3fcab0068
+      size: 1088
+    - path: models/spam.pkl
+      hash: md5
+      md5: fe143774f90b7f1d1d400815b9e2c80b
+      size: 2673
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 709b6bca540646a7a4399329013b7642
+      size: 160
