@@ -51,6 +51,22 @@ curl -X POST http://localhost:8000/predict \
 └── DEPLOYMENT.md
 ```
 
-## 开发流程
+## 开发与部署流程
 
-详见 [DEPLOYMENT.md](DEPLOYMENT.md)。
+代码从提交到上线的完整路径：
+
+```
+feature/* → dev → staging → main
+  ↓         ↓       ↓        ↓
+PR到dev   CI检查  staging   生产镜像
+自动CI    全绿    镜像构建   自动构建
+```
+
+| 分支 | 触发的流水线动作 |
+|------|-----------------|
+| `feature/*` 提 PR 到 `dev` | 自动跑：ruff 检查 → black 格式 → pytest 测试 → Docker 构建 |
+| 合并到 `dev` | 同上，CI 失败禁止合并 |
+| 合并到 `staging` | CI 全过后，自动用 STAGING_ENV 密钥生成 .env，构建 staging 镜像 |
+| 合并到 `main` | CI 全过后，自动用 PROD_ENV 密钥生成 .env，构建生产镜像 |
+
+详细说明见 [DEPLOYMENT.md](DEPLOYMENT.md)。
