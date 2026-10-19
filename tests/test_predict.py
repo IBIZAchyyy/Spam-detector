@@ -12,7 +12,7 @@ client = TestClient(app)
     "text",
     [
         "WINNER!! You won a FREE iPhone! Click http://win.com now!",
-        "URGENT! Your account has been suspended. Call 09061701461 immediately",
+        "FREE entry in weekly competition to win £1000. Text WIN to 80088 now!",
         "Congratulations! You have been selected for a $1000 cash prize",
     ],
 )
